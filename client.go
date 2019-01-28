@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func consulClient(keyPath string, data interface{}) ([]byte, error) {
+func ConsulClient(keyPath string, data interface{}) ([]byte, error) {
 
 	// data can be either nil or a pointer to the structure to be filled.
 	if data != nil && reflect.ValueOf(data).Kind() != reflect.Ptr {
@@ -47,7 +47,7 @@ func consulClient(keyPath string, data interface{}) ([]byte, error) {
 		for key, v := range object {
 			// if the value type is a string, and the string ends in .link - use the value as the new path
 			if subKeyPath, ok := v.(string); ok && strings.HasSuffix(key, ".link") {
-				msgData, err := consulClient(subKeyPath, nil)
+				msgData, err := ConsulClient(subKeyPath, nil)
 				if err != nil {
 					return nil, err
 				}
