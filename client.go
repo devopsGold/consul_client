@@ -108,7 +108,7 @@ func mapPrepare(dataLink *map[string]interface{}) error {
 		if subKeyPath, ok := v.(string); ok && strings.HasSuffix(key, ".link") {
 			msgData, err := ConsulClient(subKeyPath, nil)
 			if err != nil {
-				return fmt.Errorf("no value found for this path: %s", key)
+				return fmt.Errorf("no value found for this path: %s", subKeyPath)
 			}
 
 			delete(object, key)
