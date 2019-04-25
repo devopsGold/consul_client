@@ -2,7 +2,7 @@ package consul_client
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	consul "github.com/hashicorp/consul/api"
 	"reflect"
 	"strings"
@@ -12,7 +12,7 @@ func ConsulClient(keyPath string, data interface{}) ([]byte, error) {
 
 	// data can be either nil or a pointer to the structure to be filled.
 	if data != nil && reflect.ValueOf(data).Kind() != reflect.Ptr {
-		return nil, errors.New("invalid pointer. data must be 'nil' or pointer")
+		return nil, fmt.Errorf("invalid pointer. data must be 'nil' or pointer")
 	}
 
 	config := consul.DefaultConfig()
@@ -30,12 +30,12 @@ func ConsulClient(keyPath string, data interface{}) ([]byte, error) {
 	}
 
 	if value == nil {
-		return nil, errors.New("value is empty")
+		return nil, fmt.Errorf("value is empty")
 	}
 
 	if strings.HasSuffix(keyPath, ".json") {
 		if data == nil {
-			return nil, errors.New("no structure passed for json data")
+			return nil, fmt.Errorf("no structure passed for json data")
 		}
 
 		// try unpack []byte in map[string]interface
@@ -56,7 +56,7 @@ func ConsulClient(keyPath string, data interface{}) ([]byte, error) {
 
 		// data can be either as an object or as a list, otherwise the data is not valid
 		if len(valueData) == 0 {
-			return nil, errors.New("failed to unpack data, value is empty")
+			return nil, fmt.Errorf("failed to unpack data, value is empty")
 		}
 
 		err = json.Unmarshal(valueData, data)
@@ -108,7 +108,7 @@ func mapPrepare(dataLink *map[string]interface{}) error {
 		if subKeyPath, ok := v.(string); ok && strings.HasSuffix(key, ".link") {
 			msgData, err := ConsulClient(subKeyPath, nil)
 			if err != nil {
-				return err
+				return fmt.Errorf("no value found for this path: %s", key)
 			}
 
 			delete(object, key)
