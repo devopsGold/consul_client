@@ -16,7 +16,7 @@ func ConsulClient(keyPath string, data interface{}) ([]byte, error) {
 	}
 
 	config := consul.DefaultConfig()
-	config.Address = "127.0.0.1:8500"
+	config.Address = "consul.ms:8500"
 	client, err := consul.NewClient(config)
 
 	if err != nil {
